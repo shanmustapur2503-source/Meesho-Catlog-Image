@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meesho QC-Passed Variant Generator</title>
+    <title>Meesho Multi-Directional Variant Generator</title>
     <style>
         :root {
             --primary-color: #9f2275; /* Meesho Pink */
@@ -132,9 +132,9 @@
 
         .variant-card p {
             margin: 6px 0 2px 0;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
-            color: #555;
+            color: #444;
         }
 
         .variant-card span {
@@ -147,14 +147,14 @@
             display: none;
         }
 
-        .notice-box {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
+        .shipping-card {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
             padding: 12px;
             margin-bottom: 15px;
             border-radius: 4px;
             font-size: 13px;
-            color: #664d03;
+            color: #0050b3;
         }
     </style>
 </head>
@@ -162,39 +162,42 @@
 
 <div class="container">
     <header>
-        <h1>Meesho AI-QC Compliant Variant Generator</h1>
-        <p>1000x1000px JPGs | Strict No-Text, No-Emoji Strategy to guarantee a 100% QC Pass Rate</p>
+        <h1>Meesho Advanced Directional Variant Multiplier</h1>
+        <p>1000x1000px | Auto-Compressed < 150KB | Fully Compliant Clean-Cut Variant Standard</p>
     </header>
 
     <div class="main-layout">
-        <!-- Controls -->
+        <!-- Controls Panel -->
         <div class="control-panel">
-            <div class="notice-box">
-                <strong>QC Pass Note:</strong> Text and Emojis are blocked to prevent automated listing rejections. This version uses subtle scale shifts, placement offsets, and permitted neutral border gradients that algorithms register as a completely fresh image asset.
+            <div class="shipping-card">
+                <strong>💡 Lowest Delivery Rate Target (₹45 - ₹60):</strong>
+                <p style="margin: 4px 0 0 0; line-height: 1.4;">
+                    To keep your shipping charges low, ensure that your panel size listing attributes indicate a <strong>Dead Weight under 0.5 kg (500 grams)</strong>.
+                </p>
             </div>
             
             <div class="form-group">
-                <label for="imageLoader">Upload Main Product Image</label>
+                <label for="imageLoader">Upload Base Product Asset</label>
                 <input type="file" id="imageLoader" accept="image/*">
             </div>
 
-            <button id="generateBtn" class="btn" disabled>Generate 10 QC-Safe JPEGs</button>
+            <button id="generateBtn" class="btn" disabled>Generate 10 Directional Variations</button>
             <button id="downloadAllBtn" class="btn btn-download-all" style="display: none;">Download All Images (ZIP)</button>
         </div>
 
-        <!-- Output Grid -->
+        <!-- Previews Screen -->
         <div class="preview-panel">
-            <h3>QC Compliant Variations Preview</h3>
+            <h3>Multi-Angle Variations Grid</h3>
             <div id="gridOutputs" class="grid-outputs">
                 <p style="color: #999; grid-column: 1/-1; text-align: center; padding: 40px 0;">
-                    Upload your listing file and process to see variations.
+                    Load your listing master file above to render rotations.
                 </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 1000x1000 Base Engine Matrix -->
+<!-- Base Processing Matrix Bounding Size -->
 <canvas id="canvasStorage" width="1000" height="1000"></canvas>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -210,19 +213,18 @@
     let uploadedImage = null;
     let generatedImagesBlobs = []; 
 
-    // Purely legal background tinting, padding changes, and subtle position changes
-    // Looks identical to humans, completely different fingerprint hash to Meesho AI algorithms
-    const structuralConfigs = [
-        { bg: "#FFFFFF", scaleMod: 0.82, xOffsetMod: 0,   yOffsetMod: 0,   label: "Base_Perfect_Center" },
-        { bg: "#FAFAFA", scaleMod: 0.85, xOffsetMod: 5,   yOffsetMod: -5,  label: "Shift_Top_Right" },
-        { bg: "#F7F7F7", scaleMod: 0.80, xOffsetMod: -8,  yOffsetMod: 5,   label: "Zoom_Bottom_Left" },
-        { bg: "#FFFFFF", scaleMod: 0.84, xOffsetMod: 0,   yOffsetMod: 8,   label: "Shift_Down" },
-        { bg: "#Fdfdfd", scaleMod: 0.79, xOffsetMod: 10,  yOffsetMod: 10,  label: "Compact_Diagonal" },
-        { bg: "#F5F5F5", scaleMod: 0.86, xOffsetMod: -5,  yOffsetMod: -5,  label: "Zoom_Top_Left" },
-        { bg: "#FAFAFA", scaleMod: 0.83, xOffsetMod: -10, yOffsetMod: 0,   label: "Shift_Left" },
-        { bg: "#FFFFFF", scaleMod: 0.81, xOffsetMod: 8,   yOffsetMod: -8,  label: "Shift_Top_Right_Alt" },
-        { bg: "#F9F9F9", scaleMod: 0.85, xOffsetMod: 0,   yOffsetMod: -10, label: "Shift_Up" },
-        { bg: "#FFFFFF", scaleMod: 0.78, xOffsetMod: -5,  yOffsetMod: 8,   label: "Minimal_Zoom_Shift" }
+    // Advanced Matrix transform directives changing layout across all directions
+    const matrixDirections = [
+        { flipH: false, flipV: false, angle: 0,   scale: 0.85, dx: 0,    dy: 0,    label: "Standard_Center" },
+        { flipH: true,  flipV: false, angle: 0,   scale: 0.85, dx: 0,    dy: 0,    label: "Horizontal_Mirror_Flip" },
+        { flipH: false, flipV: false, angle: 2,   scale: 0.82, dx: -15,  dy: -10,  label: "Left_Tilt_Top_Offset" },
+        { flipH: false, flipV: false, angle: -2,  scale: 0.82, dx: 15,   dy: 10,   label: "Right_Tilt_Bottom_Offset" },
+        { flipH: true,  flipV: false, angle: 3,   scale: 0.80, dx: 10,   dy: -15,  label: "Flipped_Angle_Shift" },
+        { flipH: false, flipV: false, angle: 0,   scale: 0.78, dx: -35,  dy: 0,    label: "Left_Horizontal_Push" },
+        { flipH: false, flipV: false, angle: 0,   scale: 0.78, dx: 35,   dy: 0,    label: "Right_Horizontal_Push" },
+        { flipH: true,  flipV: false, angle: -1.5,scale: 0.83, dx: -10,  dy: 20,   label: "Flipped_Lower_Left_Stance" },
+        { flipH: false, flipV: false, angle: 0,   scale: 0.80, dx: 0,    dy: -35,  label: "Vertical_Upward_Lift" },
+        { flipH: false, flipV: false, angle: 0,   scale: 0.80, dx: 0,    dy: 35,   label: "Vertical_Downward_Drop" }
     ];
 
     imageLoader.addEventListener('change', function(e) {
@@ -237,7 +239,7 @@
         reader.readAsDataURL(e.target.files[0]);
     });
 
-    function compressToTargetBlob(canvasElement, initialQuality = 0.88) {
+    function compressToTargetBlob(canvasElement, initialQuality = 0.86) {
         return new Promise((resolve) => {
             let quality = initialQuality;
             function attemptCompression() {
@@ -245,7 +247,7 @@
                     if (blob.size <= 150 * 1024 || quality <= 0.45) {
                         resolve(blob);
                     } else {
-                        quality -= 0.07;
+                        quality -= 0.06;
                         attemptCompression();
                     }
                 }, 'image/jpeg', quality);
@@ -260,38 +262,51 @@
         gridOutputs.innerHTML = '';
         generatedImagesBlobs = [];
 
-        for (let i = 0; i < structuralConfigs.length; i++) {
-            const config = structuralConfigs[i];
+        for (let i = 0; i < matrixDirections.length; i++) {
+            const transform = matrixDirections[i];
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Render the legal background fill (white or extremely pale off-white light neutrals)
-            ctx.fillStyle = config.bg;
+            // Render pure white base backdrop
+            ctx.fillStyle = "#FFFFFF";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Compute standard structural centering proportions
-            const baseRatio = Math.min(canvas.width / uploadedImage.width, canvas.height / uploadedImage.height);
-            
-            // Apply the safe algorithm variation multipliers
-            const finalWidth = uploadedImage.width * baseRatio * config.scaleMod;
-            const finalHeight = uploadedImage.height * baseRatio * config.scaleMod;
-            
-            // Calculate base centers and inject the offset modifiers
-            const xCenter = (canvas.width - finalWidth) / 2 + config.xOffsetMod;
-            const yCenter = (canvas.height - finalHeight) / 2 + config.yOffsetMod;
-            
-            // Draw pure real product photo safely transformed
-            ctx.drawImage(uploadedImage, xCenter, yCenter, finalWidth, finalHeight);
+            // Save canvas context to safely map coordinate adjustments
+            ctx.save();
 
-            // Apply size optimization to protect 150KB threshold ceiling limit
+            // 1. Move origin coordinate to canvas absolute center point
+            ctx.translate(canvas.width / 2 + transform.dx, canvas.height / 2 + transform.dy);
+
+            // 2. Process mechanical mirror flips across horizontal/vertical lines
+            const scaleX = transform.flipH ? -1 : 1;
+            const scaleY = transform.flipV ? -1 : 1;
+            ctx.scale(scaleX, scaleY);
+
+            // 3. Process structural system rotation handling micro-angles
+            if (transform.angle !== 0) {
+                ctx.rotate((transform.angle * Math.PI) / 180);
+            }
+
+            // 4. Scale actual design proportional footprint bounding sizes
+            const baseRatio = Math.min(canvas.width / uploadedImage.width, canvas.height / uploadedImage.height);
+            const renderWidth = uploadedImage.width * baseRatio * transform.scale;
+            const renderHeight = uploadedImage.height * baseRatio * transform.scale;
+
+            // Draw product image relative to the modified center point
+            ctx.drawImage(uploadedImage, -renderWidth / 2, -renderHeight / 2, renderWidth, renderHeight);
+
+            // Restore canvas coordinate rules back to zero framework defaults
+            ctx.restore();
+
+            // Run compression sweep
             const optimizedBlob = await compressToTargetBlob(canvas);
             const fileSizeInKB = (optimizedBlob.size / 1024).toFixed(1);
             
-            generatedImagesBlobs.push({ blob: optimizedBlob, filename: `${config.label}.jpg` });
+            generatedImagesBlobs.push({ blob: optimizedBlob, filename: `${transform.label}.jpg` });
 
             const imageUrl = URL.createObjectURL(optimizedBlob);
             
-            // Node Append Elements
+            // Form display items inside layout grid
             const card = document.createElement('div');
             card.className = 'variant-card';
             
@@ -299,7 +314,7 @@
             img.src = imageUrl;
             
             const label = document.createElement('p');
-            label.innerText = config.label.replace(/_/g, ' ');
+            label.innerText = transform.label.replace(/_/g, ' ');
             
             const sizeLabel = document.createElement('span');
             sizeLabel.innerText = `${fileSizeInKB} KB`;
@@ -325,7 +340,7 @@
             const zipUrl = URL.createObjectURL(content);
             const downloadLink = document.createElement('a');
             downloadLink.href = zipUrl;
-            downloadLink.download = "meesho_qc_passed_pack.zip";
+            downloadLink.download = "meesho_directional_variants.zip";
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
