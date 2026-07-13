@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meesho Multi-Directional Variant Generator</title>
+    <title>Meesho Advanced Multi-Directional & Multi-Color Variant Engine</title>
     <style>
         :root {
             --primary-color: #9f2275; /* Meesho Pink */
@@ -66,6 +66,15 @@
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
         }
 
         .btn {
@@ -147,7 +156,7 @@
             display: none;
         }
 
-        .shipping-card {
+        .info-card {
             background-color: #e6f7ff;
             border-left: 4px solid #1890ff;
             padding: 12px;
@@ -162,42 +171,47 @@
 
 <div class="container">
     <header>
-        <h1>Meesho Advanced Directional Variant Multiplier</h1>
-        <p>1000x1000px | Auto-Compressed < 150KB | Fully Compliant Clean-Cut Variant Standard</p>
+        <h1>Meesho Directional & Color Variant Engine</h1>
+        <p>1000x1000px | Auto-Compressed < 150KB | Dynamic Rotations + Changing Title Colors</p>
     </header>
 
     <div class="main-layout">
         <!-- Controls Panel -->
         <div class="control-panel">
-            <div class="shipping-card">
-                <strong>💡 Lowest Delivery Rate Target (₹45 - ₹60):</strong>
+            <div class="info-card">
+                <strong>📦 Low Shipping Fee Configuration Reminder:</strong>
                 <p style="margin: 4px 0 0 0; line-height: 1.4;">
-                    To keep your shipping charges low, ensure that your panel size listing attributes indicate a <strong>Dead Weight under 0.5 kg (500 grams)</strong>.
+                    To keep shipping charges low, type <strong>0.3 kg</strong> and box dimensions of <strong>20x15x5 cm</strong> inside your Meesho listing form panel.
                 </p>
             </div>
             
             <div class="form-group">
-                <label for="imageLoader">Upload Base Product Asset</label>
+                <label for="imageLoader">1. Upload Product Image</label>
                 <input type="file" id="imageLoader" accept="image/*">
             </div>
 
-            <button id="generateBtn" class="btn" disabled>Generate 10 Directional Variations</button>
+            <div class="form-group">
+                <label for="productTitle">2. Enter Product Title/Text (Optional)</label>
+                <input type="text" id="productTitle" placeholder="e.g., SWAMI SAMARTH FRAMES" value="">
+            </div>
+
+            <button id="generateBtn" class="btn" disabled>Generate 10 Variants</button>
             <button id="downloadAllBtn" class="btn btn-download-all" style="display: none;">Download All Images (ZIP)</button>
         </div>
 
         <!-- Previews Screen -->
         <div class="preview-panel">
-            <h3>Multi-Angle Variations Grid</h3>
+            <h3>Multi-Angle & Multi-Color Variations</h3>
             <div id="gridOutputs" class="grid-outputs">
                 <p style="color: #999; grid-column: 1/-1; text-align: center; padding: 40px 0;">
-                    Load your listing master file above to render rotations.
+                    Upload an asset and click generate to process all matrices.
                 </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Base Processing Matrix Bounding Size -->
+<!-- 1000x1000 Processing Engine -->
 <canvas id="canvasStorage" width="1000" height="1000"></canvas>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -206,6 +220,7 @@
     const imageLoader = document.getElementById('imageLoader');
     const generateBtn = document.getElementById('generateBtn');
     const downloadAllBtn = document.getElementById('downloadAllBtn');
+    const productTitleInput = document.getElementById('productTitle');
     const gridOutputs = document.getElementById('gridOutputs');
     const canvas = document.getElementById('canvasStorage');
     const ctx = canvas.getContext('2d');
@@ -213,18 +228,18 @@
     let uploadedImage = null;
     let generatedImagesBlobs = []; 
 
-    // Advanced Matrix transform directives changing layout across all directions
-    const matrixDirections = [
-        { flipH: false, flipV: false, angle: 0,   scale: 0.85, dx: 0,    dy: 0,    label: "Standard_Center" },
-        { flipH: true,  flipV: false, angle: 0,   scale: 0.85, dx: 0,    dy: 0,    label: "Horizontal_Mirror_Flip" },
-        { flipH: false, flipV: false, angle: 2,   scale: 0.82, dx: -15,  dy: -10,  label: "Left_Tilt_Top_Offset" },
-        { flipH: false, flipV: false, angle: -2,  scale: 0.82, dx: 15,   dy: 10,   label: "Right_Tilt_Bottom_Offset" },
-        { flipH: true,  flipV: false, angle: 3,   scale: 0.80, dx: 10,   dy: -15,  label: "Flipped_Angle_Shift" },
-        { flipH: false, flipV: false, angle: 0,   scale: 0.78, dx: -35,  dy: 0,    label: "Left_Horizontal_Push" },
-        { flipH: false, flipV: false, angle: 0,   scale: 0.78, dx: 35,   dy: 0,    label: "Right_Horizontal_Push" },
-        { flipH: true,  flipV: false, angle: -1.5,scale: 0.83, dx: -10,  dy: 20,   label: "Flipped_Lower_Left_Stance" },
-        { flipH: false, flipV: false, angle: 0,   scale: 0.80, dx: 0,    dy: -35,  label: "Vertical_Upward_Lift" },
-        { flipH: false, flipV: false, angle: 0,   scale: 0.80, dx: 0,    dy: 35,   label: "Vertical_Downward_Drop" }
+    // Advanced directional matrix shifts coupled with 10 completely unique title colors
+    const matrixConfigs = [
+        { flipH: false, flipV: false, angle: 0,    scale: 0.76, dx: 0,    dy: -40,  textColor: "#9F2275", label: "Center_Standard_Pink" },
+        { flipH: true,  flipV: false, angle: 0,    scale: 0.76, dx: 0,    dy: -40,  textColor: "#111827", label: "Horiz_Mirror_Dark" },
+        { flipH: false, flipV: false, angle: 2.5,  scale: 0.74, dx: -15,  dy: -50,  textColor: "#FF3B30", label: "Left_Tilt_Red" },
+        { flipH: false, flipV: false, angle: -2.5, scale: 0.74, dx: 15,   dy: -30,  textColor: "#007AFF", label: "Right_Tilt_Blue" },
+        { flipH: true,  flipV: false, angle: 2,    scale: 0.72, dx: 10,   dy: -45,  textColor: "#E60023", label: "Flipped_Angle_Crimson" },
+        { flipH: false, flipV: false, angle: 0,    scale: 0.72, dx: -35,  dy: -40,  textColor: "#059669", label: "Left_Push_Emerald" },
+        { flipH: false, flipV: false, angle: 0,    scale: 0.72, dx: 35,   dy: -40,  textColor: "#FF9500", label: "Right_Push_Orange" },
+        { flipH: true,  flipV: false, angle: -2,   scale: 0.75, dx: -10,  dy: -25,  textColor: "#5856D6", label: "Flipped_Stance_Purple" },
+        { flipH: false, flipV: false, angle: 0,    scale: 0.74, dx: 0,    dy: -65,  textColor: "#2563EB", label: "Upward_Lift_Royal" },
+        { flipH: false, flipV: false, angle: 0,    scale: 0.73, dx: 0,    dy: -15,  textColor: "#0F766E", label: "Downward_Drop_Teal" }
     ];
 
     imageLoader.addEventListener('change', function(e) {
@@ -261,52 +276,66 @@
 
         gridOutputs.innerHTML = '';
         generatedImagesBlobs = [];
+        
+        const titleText = productTitleInput.value.trim().toUpperCase();
 
-        for (let i = 0; i < matrixDirections.length; i++) {
-            const transform = matrixDirections[i];
+        for (let i = 0; i < matrixConfigs.length; i++) {
+            const transform = matrixConfigs[i];
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Render pure white base backdrop
+            // Build base background
             ctx.fillStyle = "#FFFFFF";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Save canvas context to safely map coordinate adjustments
+            // Save canvas context map
             ctx.save();
 
-            // 1. Move origin coordinate to canvas absolute center point
+            // 1. Relocate center tracking origin
             ctx.translate(canvas.width / 2 + transform.dx, canvas.height / 2 + transform.dy);
 
-            // 2. Process mechanical mirror flips across horizontal/vertical lines
+            // 2. Apply mirror axis variables
             const scaleX = transform.flipH ? -1 : 1;
             const scaleY = transform.flipV ? -1 : 1;
             ctx.scale(scaleX, scaleY);
 
-            // 3. Process structural system rotation handling micro-angles
+            // 3. Apply angular rotation metrics
             if (transform.angle !== 0) {
                 ctx.rotate((transform.angle * Math.PI) / 180);
             }
 
-            // 4. Scale actual design proportional footprint bounding sizes
+            // 4. Draw base product relative to altered center coordinates
             const baseRatio = Math.min(canvas.width / uploadedImage.width, canvas.height / uploadedImage.height);
             const renderWidth = uploadedImage.width * baseRatio * transform.scale;
             const renderHeight = uploadedImage.height * baseRatio * transform.scale;
 
-            // Draw product image relative to the modified center point
             ctx.drawImage(uploadedImage, -renderWidth / 2, -renderHeight / 2, renderWidth, renderHeight);
 
-            // Restore canvas coordinate rules back to zero framework defaults
+            // Restore canvas tracking rule sets
             ctx.restore();
 
-            // Run compression sweep
+            // 5. Render Dynamic Text Title String if input contains string data
+            if (titleText.length > 0) {
+                ctx.save();
+                ctx.fillStyle = transform.textColor; // Unique color from matrix configuration array
+                ctx.font = "bold 34px 'Segoe UI', Arial, sans-serif";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "bottom";
+                
+                // Keep text clearly aligned at the bottom center zone of the 1000x1000 canvas
+                ctx.fillText(titleText, canvas.width / 2, canvas.height - 50);
+                ctx.restore();
+            }
+
+            // Run smart structural compression check
             const optimizedBlob = await compressToTargetBlob(canvas);
             const fileSizeInKB = (optimizedBlob.size / 1024).toFixed(1);
             
-            generatedImagesBlobs.push({ blob: optimizedBlob, filename: `${transform.label}.jpg` });
+            generatedImagesBlobs.push({ blob: optimizedBlob, filename: `${transform.filename || transform.label}.jpg` });
 
             const imageUrl = URL.createObjectURL(optimizedBlob);
             
-            // Form display items inside layout grid
+            // Create preview items grid card components
             const card = document.createElement('div');
             card.className = 'variant-card';
             
@@ -315,6 +344,7 @@
             
             const label = document.createElement('p');
             label.innerText = transform.label.replace(/_/g, ' ');
+            label.style.color = transform.textColor;
             
             const sizeLabel = document.createElement('span');
             sizeLabel.innerText = `${fileSizeInKB} KB`;
@@ -340,7 +370,7 @@
             const zipUrl = URL.createObjectURL(content);
             const downloadLink = document.createElement('a');
             downloadLink.href = zipUrl;
-            downloadLink.download = "meesho_directional_variants.zip";
+            downloadLink.download = "meesho_color_directional_variants.zip";
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
