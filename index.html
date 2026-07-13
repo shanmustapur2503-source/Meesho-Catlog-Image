@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meesho 1000x1000 JPG Variant Generator</title>
+    <style>
+        :root {
+            --primary-color: #9f2275; /* Meesho Brand Pink */
+            --primary-hover: #821a5f;
+            --bg-color: #f7f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .control-panel {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s ease;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn-download-all {
+            background-color: #28a745;
+            margin-top: 15px;
+        }
+        .btn-download-all:hover {
+            background-color: #218838;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .preview-panel {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .grid-outputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .variant-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .variant-card img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1/1;
+            object-fit: contain;
+            background: #f9f9f9;
+        }
+
+        .variant-card p {
+            margin: 4px 0 0 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .variant-card span {
+            font-size: 11px;
+            color: #28a745;
+            display: block;
+        }
+
+        #canvasStorage {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Meesho Catalog Variant Generator (1000x1000)</h1>
+        <p>Outputs: JPG format | Dimensions: 1000x1000px | File size auto-compressed under 150KB</p>
+    </header>
+
+    <div class="main-layout">
+        <div class="control-panel">
+            <div class="form-group">
+                <label for="imageLoader">1. Upload Product Image</label>
+                <input type="file" id="imageLoader" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label for="bannerText">2. Custom Banner Text</label>
+                <input type="text" id="bannerText" value="TRENDING COLLECTION" placeholder="e.g., BEST SELLER">
+            </div>
+
+            <button id="generateBtn" class="btn" disabled>Generate 10 JPGs</button>
+            <button id="downloadAllBtn" class="btn btn-download-all" style="display: none;">Download All Images (ZIP)</button>
+        </div>
+
+        <div class="preview-panel">
+            <h3>Generated Variants Preview</h3>
+            <div id="gridOutputs" class="grid-outputs">
+                <p style="color: #999; grid-column: 1/-1; text-align: center; padding: 40px 0;">
+                    Upload an image and click generate to view variations.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<canvas id="canvasStorage" width="1000" height="1000"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script>
+    const imageLoader = document.getElementById('imageLoader');
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadAllBtn = document.getElementById('downloadAllBtn');
+    const bannerTextInput = document.getElementById('bannerText');
+    const gridOutputs = document.getElementById('gridOutputs');
+    const canvas = document.getElementById('canvasStorage');
+    const ctx = canvas.getContext('2d');
+
+    let uploadedImage = null;
+    let generatedImagesBlobs = []; 
+
+    const variantsConfig = [
+        { emoji: "🔥", textColor: "#FF3B30", label: "Variant_Red_Fire" },
+        { emoji: "👑", textColor: "#FFCC00", label: "Variant_Gold_Crown" },
+        { emoji: "⚡", textColor: "#007AFF", label: "Variant_Blue_Lightning" },
+        { emoji: "💖", textColor: "#FF2D55", label: "Variant_Pink_Heart" },
+        { emoji: "🌟", textColor: "#5856D6", label: "Variant_Purple_Star" },
+        { emoji: "🛍️", textColor: "#4CD964", label: "Variant_Green_Bag" },
+        { emoji: "✨", textColor: "#FF9500", label: "Variant_Orange_Sparkle" },
+        { emoji: "💯", textColor: "#E60023", label: "Variant_Crimson_100" },
+        { emoji: "🎯", textColor: "#059669", label: "Variant_Emerald_Target" },
+        { emoji: "🚀", textColor: "#111827", label: "Variant_Dark_Rocket" }
+    ];
+
+    imageLoader.addEventListener('change', function(e) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            uploadedImage = new Image();
+            uploadedImage.onload = function() {
+                generateBtn.disabled = false;
+            }
+            uploadedImage.src = event.target.result;
+        }
+        reader.readAsDataURL(e.target.files[0]);
+    });
+
+    // Smart compression utility function to target < 150KB criteria safely
+    function compressToTargetBlob(canvasElement, initialQuality = 0.85) {
+        return new Promise((resolve) => {
+            let quality = initialQuality;
+            
+            function attemptCompression() {
+                canvasElement.toBlob((blob) => {
+                    // Check if file size satisfies requirement (< 150KB) or we hit minimum fallback quality
+                    if (blob.size <= 150 * 1024 || quality <= 0.5) {
+                        resolve(blob);
+                    } else {
+                        quality -= 0.08; // Reduce quality structurally if target size isn't met
+                        attemptCompression();
+                    }
+                }, 'image/jpeg', quality); // Enforced image/jpeg export standard
+            }
+            attemptCompression();
+        });
+    }
+
+    generateBtn.addEventListener('click', async function() {
+        if (!uploadedImage) return;
+
+        gridOutputs.innerHTML = '';
+        generatedImagesBlobs = [];
+        
+        const textToDisplay = bannerTextInput.value.trim().toUpperCase() || "TRENDING";
+
+        for (let i = 0; i < variantsConfig.length; i++) {
+            const config = variantsConfig[i];
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Required clean white base block for standard JPEG compliance
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Responsive structural calculation mapping base design centered inside 1000x1000 limits
+            const ratio = Math.min(canvas.width / uploadedImage.width, canvas.height / uploadedImage.height);
+            const newWidth = uploadedImage.width * ratio;
+            const newHeight = uploadedImage.height * ratio;
+            const xOffset = (canvas.width - newWidth) / 2;
+            const yOffset = (canvas.height - newHeight) / 2;
+            
+            ctx.drawImage(uploadedImage, xOffset, yOffset, newWidth, newHeight);
+
+            // Render Dynamic UI Top Left Overlays (Slightly upscaled fonts to fit 1000px resolution beautifully)
+            ctx.save();
+            ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+
+            // Emoji Stamp placement
+            ctx.font = "52px Arial";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.fillText(config.emoji, 35, 35);
+
+            // Variant Copy adjustment placement
+            ctx.fillStyle = config.textColor;
+            ctx.font = "bold 32px 'Segoe UI', Arial, sans-serif";
+            ctx.textBaseline = "middle";
+            ctx.fillText(textToDisplay, 110, 64);
+            
+            ctx.restore();
+
+            // Run compression script to ensure size matches constraints
+            const optimizedBlob = await compressToTargetBlob(canvas);
+            const fileSizeInKB = (optimizedBlob.size / 1024).toFixed(1);
+            
+            generatedImagesBlobs.push({ blob: optimizedBlob, filename: `${config.label}.jpg` });
+
+            const imageUrl = URL.createObjectURL(optimizedBlob);
+            
+            // Build UI Node elements
+            const card = document.createElement('div');
+            card.className = 'variant-card';
+            
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            
+            const label = document.createElement('p');
+            label.innerText = `Variant ${i + 1}`;
+            label.style.color = config.textColor;
+
+            const sizeLabel = document.createElement('span');
+            sizeLabel.innerText = `${fileSizeInKB} KB (JPG)`;
+
+            card.appendChild(img);
+            card.appendChild(label);
+            card.appendChild(sizeLabel);
+            gridOutputs.appendChild(card);
+        }
+
+        downloadAllBtn.style.display = 'block';
+    });
+
+    downloadAllBtn.addEventListener('click', function() {
+        if (generatedImagesBlobs.length === 0) return;
+
+        const zip = new JSZip();
+        generatedImagesBlobs.forEach(item => {
+            zip.file(item.filename, item.blob);
+        });
+
+        zip.generateAsync({type:"blob"}).then(function(content) {
+            const zipUrl = URL.createObjectURL(content);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = zipUrl;
+            downloadLink.download = "meesho_1000x1000_jpgs.zip";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    });
+</script>
+</body>
+</html>
